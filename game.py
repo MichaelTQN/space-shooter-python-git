@@ -1,8 +1,7 @@
 # Arcade-style space shooter inspired by Galaga and Spacer Invaders.
 # Made for the purpose of teaching git version control to beginners.
-
 import pygame as pg
-
+from alien import Alien
 
 ### Setup ###
 pg.init()
@@ -21,21 +20,13 @@ ship_y = 500
 ship_w = ship_images[0].get_rect().size[0]
 ship_h = ship_images[0].get_rect().size[1]
 
-# Alien character
-alien_images = []
-for i in range(2):
-    img = pg.image.load(f"images/alien_{i}.png")
-    alien_images.append(img)
 
 aliens = []
 for i in range(5):
-    alien1 = {'x': 50*i + 50 , 'y': 0}
-    alien2 = {'x': 50*i + 50, 'y': 50}
+    alien1 = Alien(50*i + 50, 0)
+    alien2 = Alien(50*i + 50, 50)
     aliens.append(alien1)
     aliens.append(alien2)
-
-alien_w = alien_images[0].get_rect().size[0]
-alien_h = alien_images[0].get_rect().size[1]
 
 # Projectiles 
 projectile_fired = False
@@ -99,7 +90,7 @@ while running:
 
     # Alien
     for alien in aliens:
-        alien['y'] += 1
+        aliens.move
 
     # Spaceship
     if left_pressed:
@@ -124,12 +115,12 @@ while running:
         for alien in aliens:
 
             # Horizontal (x) overlap
-            if (alien['x'] < projectile['x'] + projectile_w and 
-                projectile['x'] < alien['x']+alien_w):
+            if (alien.x < projectile['x'] + projectile_w and 
+                projectile['x'] < alien.x+alien.w):
                 
                 # Vertical (y) overlap 
-                if (projectile['y'] < alien['y'] + alien_h and 
-                    alien['y'] < projectile['y'] + projectile_h):
+                if (projectile['y'] < alien.y + alien.h and 
+                    alien.y < projectile['y'] + projectile_h):
 
                     # Alien is hit
                     projectiles.remove(projectile)
@@ -157,11 +148,6 @@ while running:
     # 25% animation speed: int(tick/4) % 3
     r = int(tick/4) % 3 
     screen.blit(ship_images[r], (ship_x, ship_y))
-
-    # Alien
-    r = int(tick/8) % 2
-    for alien in aliens:
-        screen.blit(alien_images[r], (alien['x'], alien['y']))
 
     # Projectiles
     for projectile in projectiles:
