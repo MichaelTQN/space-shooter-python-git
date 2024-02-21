@@ -2,6 +2,8 @@
 # Made for the purpose of teaching git version control to beginners.
 import pygame as pg
 from alien import Alien
+from projectiles import Projectile
+
 
 ### Setup ###
 pg.init()
@@ -31,8 +33,6 @@ for i in range(5):
 # Projectiles 
 projectile_fired = False
 projectiles = []
-projectile_w = 4 
-projectile_h = 8
 
 # Keypress status
 left_pressed = False
@@ -90,7 +90,7 @@ while running:
 
     # Alien
     for alien in aliens:
-        aliens.move
+        alien.move()
 
     # Spaceship
     if left_pressed:
@@ -103,10 +103,10 @@ while running:
     # Reverse iteration needed to handle each projectile correctly
     # in cases where a projectile is removed.
     for projectile in reversed(projectiles):
-        projectile['y'] -= 8 
+        Projectile.move()
 
         # Remove projectiles leavning the top of the screen
-        if projectile['y'] < 0:
+        if projectile.y < 0:
             projectiles.remove(projectile)
 
     # Alien / projectile collision 
@@ -115,12 +115,12 @@ while running:
         for alien in aliens:
 
             # Horizontal (x) overlap
-            if (alien.x < projectile['x'] + projectile_w and 
-                projectile['x'] < alien.x+alien.w):
+            if (alien.x < projectile.x + projectile.w and 
+                projectile.x < alien.x+alien.w):
                 
                 # Vertical (y) overlap 
-                if (projectile['y'] < alien.y + alien.h and 
-                    alien.y < projectile['y'] + projectile_h):
+                if (projectile.y < alien.y + alien.h and 
+                    alien.y < projectile.y + projectile.h):
 
                     # Alien is hit
                     projectiles.remove(projectile)
@@ -132,11 +132,7 @@ while running:
 
     # Firing (spawning new projectiles)
     if projectile_fired:
-        sound_laser.play()
-
-        projectile = {'x': ship_x + ship_w/2 - projectile_w/2, 
-                      'y': ship_y}
-        projectiles.append(projectile)
+        
         projectile_fired = False
 
 
@@ -149,9 +145,13 @@ while running:
     r = int(tick/4) % 3 
     screen.blit(ship_images[r], (ship_x, ship_y))
 
+    # Alien
+    for alien in aliens:
+        alien.draw(screen)
+
     # Projectiles
     for projectile in projectiles:
-        rect = (projectile['x'], projectile['y'], projectile_w, projectile_h)
+        rect = (projectile.x, projectile.y, projectile.w, projectile.h)
         pg.draw.rect(screen, (255, 0, 0), rect) 
 
     # Scoreboard
